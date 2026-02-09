@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dla Karinki</title>
+    <link rel="icon" href="favicon.webp">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background-image: linear-gradient(135deg, #fc898c 0%, #fecfef 100%);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative; /* Ważne dla pozycjonowania zdjęć */
+        }
+
+        /* --- STYLE DLA ZDJĘĆ --- */
+        .corner-photo {
+            position: absolute; /* Ustawiamy je "sztywno" względem ekranu */
+            width: 250px;       /* Bazowa szerokość */
+            max-width: 30vw;    /* Żeby nie były za duże na małych ekranach */
+            height: auto;
+            border: 5px solid white; /* Biała ramka jak w zdjęciu */
+            border-radius: 15px;     /* Zaokrąglone rogi */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Cień */
+            z-index: 1; /* Są pod spodem */
+            transition: transform 0.3s ease;
+        }
+
+        .photo-top-left {
+            top: 70px;
+            left: 40px;
+            transform: rotate(-10deg); /* Lekki obrót w lewo */
+        }
+
+        .photo-bottom-right {
+            bottom: 70px;
+            right: 40px;
+            transform: rotate(-10deg); /* Lekki obrót w prawo */
+        }
+
+        .photo-bottom-left {
+            bottom: 70px;
+            left: 40px;
+            transform: rotate(10deg); /* Lekki obrót w prawo */
+        }
+
+        .photo-top-right {
+            top: 70px;
+            right: 40px;
+            transform: rotate(10deg); /* Lekki obrót w prawo */
+        }
+
+        .photo-top {
+            top: 40px;
+        }
+
+        .photo-bottom {
+            bottom: 40px;
+        }
+
+        /* Efekt najechania na zdjęcie (opcjonalny bajer) */
+        .corner-photo:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 5;
+        }
+
+        /* --- RESPONSYWNOŚĆ NA TELEFONY --- */
+        @media (max-width: 768px) {
+            .corner-photo {
+                width: 120px; /* Mniejsze zdjęcia na telefonie */
+                border-width: 3px;
+            }
+        }
+
+        /* --- RESZTA STYLÓW --- */
+        h1 {
+            color: #d6336c;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10; /* Tekst musi być NAD zdjęciami */
+        }
+
+        #main-container {
+            z-index: 10; /* Kontener nad zdjęciami */
+            text-align: center;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            z-index: 20; /* Przyciski najważniejsze */
+            position: relative;
+        }
+
+        button {
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #yesBtn {
+            margin-right: 70px;
+            background-color: #28a745;
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        #noBtn {
+            margin-left: 70px;
+            background-color: #dc3545;
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+            position: fixed; 
+            transition: left 0.3s ease, top 0.3s ease;
+            z-index: 30; /* Musi być najwyżej, żeby dało się go "gonić" */
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            z-index: 50;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            background-color: transparent;
+            padding: 20px;
+            border-radius: 20px;
+        }
+        
+        .success-message h1 {
+            font-size: 4rem;
+        }
+
+        .heart {
+            font-size: 5rem;
+            color: #d6336c;
+            animation: beat 1s infinite;
+        }
+
+        @keyframes beat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <img src="20251015_181221.jpg" class="corner-photo photo-top-left" alt="Nasze zdjęcie 1">
+    <img src="20260206_175808.jpg" class="corner-photo photo-bottom-right" alt="Nasze zdjęcie 2">
+    <img src="2.jpg" class="corner-photo photo-top-right" alt="Nasze zdjęcie 3">
+    <img src="3.jpg" class="corner-photo photo-bottom-left" alt="Nasze zdjęcie 4">
+    <img src="4.jpg" class="corner-photo photo-top" alt="Nasze zdjęcie 5">
+    <img src="5.jpg" class="corner-photo photo-bottom" alt="Nasze zdjęcie 6">
+
+    <div id="main-container">
+        <h1>Karinka, will you be my walentynka? ❤️</h1>
+        <div class="buttons">
+            <button id="yesBtn">TAK</button>
+            <button id="noBtn">NIE</button>
+        </div>
+    </div>
+
+    <div class="success-message" id="success">
+        <div class="heart">❤️</div>
+        <h1>Wiedziałem!</h1>
+        <p style="font-size: 1.5rem; color: #555;">Kocham Cię mocno 🫶</p>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const mainContainer = document.getElementById('main-container');
+        const successMessage = document.getElementById('success');
+
+        // Ustawienie początkowej pozycji przycisku NIE
+        const noBtnRect = noBtn.getBoundingClientRect();
+        noBtn.style.left = noBtnRect.left + 'px';
+        noBtn.style.top = noBtnRect.top + 'px';
+
+        let yesScale = 1;
+
+        function moveButton() {
+            const maxWidth = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight - 20;
+
+            const randomX = Math.max(10, Math.floor(Math.random() * maxWidth));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxHeight));
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            yesScale += 0.3;
+            yesBtn.style.transform = `scale(${yesScale})`;
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton);
+        noBtn.addEventListener('touchstart', moveButton);
+
+        function triggerConfetti() {
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        yesBtn.addEventListener('click', () => {
+            mainContainer.style.display = 'none';
+            noBtn.style.display = 'none'; 
+            successMessage.style.display = 'block';
+            
+            triggerConfetti();
+        });
+    </script>
+</body>
+</html>
